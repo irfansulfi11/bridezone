@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowRight, Check, MapPin, Sparkles, Users, Wallet } from 'lucide-react'
 import { usePageTitle } from '../lib/usePageTitle'
 import { useStore } from '../store/StoreContext'
@@ -17,15 +17,42 @@ interface Match {
   reason: string
 }
 
+const VALID_SLUGS = allCategories.map((c) => c.slug)
+const DEFAULT_SERVICES: CategorySlug[] = ['photography', 'catering', 'decor', 'venues']
+
+// Read the home-page quick-start deep link (?budget=&location=&guests=&services=)
+// so the assistant can auto-run with the visitor's picks already filled in.
+function readInitial(params: URLSearchParams) {
+  const num = (key: string, fallback: number) => {
+    const n = Number(params.get(key))
+    return Number.isFinite(n) && n > 0 ? n : fallback
+  }
+  const rawLoc = params.get('location') ?? ''
+  const location = (LOCATIONS as readonly string[]).includes(rawLoc) ? rawLoc : 'Kochi'
+  const rawServices = (params.get('services') ?? '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter((s): s is CategorySlug => (VALID_SLUGS as string[]).includes(s))
+  return {
+    budget: num('budget', 500000),
+    guests: num('guests', 250),
+    location,
+    services: rawServices.length ? rawServices : DEFAULT_SERVICES,
+    autoRun: params.has('budget') || params.has('services') || params.has('location'),
+  }
+}
+
 export default function Plan() {
   usePageTitle('Plan My Wedding')
   const { approvedVendors } = useStore()
+  const [searchParams] = useSearchParams()
+  const [initial] = useState(() => readInitial(searchParams))
 
-  const [budget, setBudget] = useState(500000)
-  const [location, setLocation] = useState('Kochi')
-  const [guests, setGuests] = useState(250)
-  const [selected, setSelected] = useState<CategorySlug[]>(['photography', 'catering', 'decor', 'venues'])
-  const [submitted, setSubmitted] = useState(false)
+  const [budget, setBudget] = useState(initial.budget)
+  const [location, setLocation] = useState(initial.location)
+  const [guests, setGuests] = useState(initial.guests)
+  const [selected, setSelected] = useState<CategorySlug[]>(initial.services)
+  const [submitted, setSubmitted] = useState(initial.autoRun)
 
   const toggle = (slug: CategorySlug) =>
     setSelected((prev) => (prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]))
@@ -79,7 +106,7 @@ export default function Plan() {
 
       <div className="container-page grid gap-10 py-12 lg:grid-cols-[380px_1fr]">
         {/* Form */}
-        <div className="lg:sticky lg:top-24 lg:self-start">
+        <div className="min-w-0 lg:sticky lg:top-24 lg:self-start">
           <form
             onSubmit={(e) => {
               e.preventDefault()
@@ -187,7 +214,7 @@ export default function Plan() {
         </div>
 
         {/* Results */}
-        <div>
+        <div className="min-w-0">
           {!submitted ? (
             <div className="flex min-h-[300px] flex-col items-center justify-center rounded-2xl border border-dashed border-maroon/20 bg-white/50 p-10 text-center">
               <span className="grid h-14 w-14 place-items-center rounded-full bg-maroon/5 text-maroon">

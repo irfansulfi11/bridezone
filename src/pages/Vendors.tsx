@@ -14,7 +14,8 @@ export default function Vendors() {
   const [params, setParams] = useSearchParams()
 
   const [category, setCategory] = useState(params.get('category') ?? '')
-  const [location, setLocation] = useState(params.get('location') ?? '')
+  // Header/hero search links use `city`; deep links from filters use `location`.
+  const [location, setLocation] = useState(params.get('location') ?? params.get('city') ?? '')
   const [budget, setBudget] = useState('any')
   const [q, setQ] = useState(params.get('q') ?? '')
   const [showFilters, setShowFilters] = useState(false)

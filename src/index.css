@@ -99,6 +99,14 @@
   .text-balance {
     text-wrap: balance;
   }
+  /* Rails scroll by button — hide the native bar without losing scrollability */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
   /* Aspect-ratio image wrapper: background prevents layout jump while loading */
   .img-frame {
     @apply relative overflow-hidden bg-maroon-50/60;

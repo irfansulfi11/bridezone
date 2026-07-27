@@ -6,6 +6,11 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
 import Vendors from './pages/Vendors'
 import VendorDetail from './pages/VendorDetail'
+import Venues from './pages/Venues'
+import Photos from './pages/Photos'
+import RealWeddings from './pages/RealWeddings'
+import Blog from './pages/Blog'
+import EInvites from './pages/EInvites'
 import Plan from './pages/Plan'
 import Collections from './pages/Collections'
 import CollectionDetail from './pages/CollectionDetail'
@@ -41,6 +46,11 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/vendors" element={<Vendors />} />
           <Route path="/vendors/:id" element={<VendorDetail />} />
+          <Route path="/venues" element={<Venues />} />
+          <Route path="/photos" element={<Photos />} />
+          <Route path="/real-weddings" element={<RealWeddings />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/e-invites" element={<EInvites />} />
           <Route path="/plan" element={<Plan />} />
           <Route path="/collections" element={<Collections />} />
           <Route path="/collections/:id" element={<CollectionDetail />} />

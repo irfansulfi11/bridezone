@@ -1,9 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowRight, Check, MapPin, Sparkles, Users, Wallet } from 'lucide-react'
 import { usePageTitle } from '../lib/usePageTitle'
 import { useStore } from '../store/StoreContext'
-import { categories as allCategories, categoryName, LOCATIONS } from '../data/categories'
+import { categories as allCategories, categoryName } from '../data/categories'
+import { ALL_CITIES } from '../data/wmg'
+import { useCity } from '../store/CityContext'
 import { cheapestPackage } from '../lib/vendorUtils'
 import { formatINR, formatINRShort } from '../lib/format'
 import type { CategorySlug, Vendor } from '../data/types'
@@ -22,13 +24,13 @@ const DEFAULT_SERVICES: CategorySlug[] = ['photography', 'catering', 'decor', 'v
 
 // Read the home-page quick-start deep link (?budget=&location=&guests=&services=)
 // so the assistant can auto-run with the visitor's picks already filled in.
-function readInitial(params: URLSearchParams) {
+function readInitial(params: URLSearchParams, fallbackCity: string) {
   const num = (key: string, fallback: number) => {
     const n = Number(params.get(key))
     return Number.isFinite(n) && n > 0 ? n : fallback
   }
   const rawLoc = params.get('location') ?? ''
-  const location = (LOCATIONS as readonly string[]).includes(rawLoc) ? rawLoc : 'Kochi'
+  const location = ALL_CITIES.includes(rawLoc) ? rawLoc : fallbackCity
   const rawServices = (params.get('services') ?? '')
     .split(',')
     .map((s) => s.trim())
@@ -45,14 +47,21 @@ function readInitial(params: URLSearchParams) {
 export default function Plan() {
   usePageTitle('Plan My Wedding')
   const { approvedVendors } = useStore()
+  const { city, setCity } = useCity()
   const [searchParams] = useSearchParams()
-  const [initial] = useState(() => readInitial(searchParams))
+  const [initial] = useState(() => readInitial(searchParams, city))
 
   const [budget, setBudget] = useState(initial.budget)
   const [location, setLocation] = useState(initial.location)
   const [guests, setGuests] = useState(initial.guests)
   const [selected, setSelected] = useState<CategorySlug[]>(initial.services)
   const [submitted, setSubmitted] = useState(initial.autoRun)
+
+  // A deep link carrying ?location= should also move the header's city pill.
+  useEffect(() => {
+    if (initial.location !== city) setCity(initial.location)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const toggle = (slug: CategorySlug) =>
     setSelected((prev) => (prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]))
@@ -89,6 +98,10 @@ export default function Plan() {
   }, [submitted, selected, budget, location, guests, approvedVendors])
 
   const totalPicks = results.reduce((n, r) => n + (r.matches[0] ? 1 : 0), 0)
+  // What the recommended line-up actually costs, against what you set aside.
+  const estimatedTotal = results.reduce((n, r) => n + (r.matches[0]?.price ?? 0), 0)
+  const overBudget = estimatedTotal > budget
+  const usedPct = budget > 0 ? Math.min(100, Math.round((estimatedTotal / budget) * 100)) : 0
 
   return (
     <div className="animate-fade-in">
@@ -145,8 +158,16 @@ export default function Plan() {
               <label className="mb-2 flex items-center gap-2 text-sm font-medium text-ink-soft">
                 <MapPin size={16} className="text-maroon" /> City
               </label>
-              <select className="field" value={location} onChange={(e) => setLocation(e.target.value)}>
-                {LOCATIONS.map((l) => (
+              <select
+                className="field"
+                value={location}
+                onChange={(e) => {
+                  // Keep the header's city pill in step with the assistant.
+                  setLocation(e.target.value)
+                  setCity(e.target.value)
+                }}
+              >
+                {ALL_CITIES.map((l) => (
                   <option key={l} value={l}>
                     {l}
                   </option>
@@ -233,9 +254,44 @@ export default function Plan() {
                   {totalPicks} vendors for a {guests}-guest wedding in {location}
                 </p>
                 <p className="mt-1 text-sm text-gold-200">
-                  {formatINR(budget)} total · about {formatINR(Math.round(budget / Math.max(selected.length, 1)))} per
-                  service
+                  {formatINR(budget)} total · about{' '}
+                  {formatINR(Math.round(budget / Math.max(selected.length, 1)))} per service
                 </p>
+
+                {/* Budget meter — top picks priced against what you set aside */}
+                <div className="mt-5 border-t border-ivory/15 pt-4">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <p className="text-sm text-ivory/80">Top picks come to</p>
+                    <p className="font-display text-lg font-semibold">
+                      {formatINR(estimatedTotal)}
+                      <span className="ml-2 text-sm font-normal text-ivory/60">
+                        of {formatINR(budget)}
+                      </span>
+                    </p>
+                  </div>
+
+                  <div
+                    className="mt-2.5 h-2 overflow-hidden rounded-full bg-ivory/15"
+                    role="progressbar"
+                    aria-valuenow={usedPct}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label="Share of budget used"
+                  >
+                    <div
+                      className={`h-full rounded-full transition-all duration-500 ${
+                        overBudget ? 'bg-gold-300' : 'bg-gold'
+                      }`}
+                      style={{ width: `${usedPct}%` }}
+                    />
+                  </div>
+
+                  <p className="mt-2 text-sm text-gold-200">
+                    {overBudget
+                      ? `${formatINR(estimatedTotal - budget)} over — try widening the budget or dropping a service.`
+                      : `${formatINR(budget - estimatedTotal)} left for cards, gifts and the unexpected.`}
+                  </p>
+                </div>
               </div>
 
               <div className="space-y-8">

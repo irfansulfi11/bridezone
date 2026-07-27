@@ -57,7 +57,7 @@ export default function AdminDashboard() {
           <h2 className="flex items-center gap-2 font-display text-lg font-semibold text-ink">
             <TrendingUp size={18} className="text-maroon" /> Recent enquiries
           </h2>
-          <Link to="/admin/enquiries" className="text-sm text-maroon hover:text-gold-600">
+          <Link to="/admin/enquiries" className="text-sm text-maroon-600 hover:text-maroon-800">
             View all →
           </Link>
         </div>

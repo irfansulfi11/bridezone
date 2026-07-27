@@ -34,7 +34,7 @@ import { usePageTitle } from '../lib/usePageTitle'
 import { formatINR } from '../lib/format'
 import { categories, categoryName } from '../data/categories'
 import type { Collection, Vendor } from '../data/types'
-import { hero, PHOTOS } from '../lib/images'
+import { hero, HERO_PHOTOS, PHOTOS } from '../lib/images'
 import {
   ALL_CITIES,
   BLOG_POSTS,
@@ -79,6 +79,8 @@ function Hero() {
   const navigate = useNavigate()
   const { city, setCity } = useCity()
   const [vendorType, setVendorType] = useState('')
+  // Walk the candidate list if a photo 404s — the hero must never be blank.
+  const [photo, setPhoto] = useState(0)
 
   const submit = (e: FormEvent) => {
     e.preventDefault()
@@ -90,16 +92,19 @@ function Hero() {
 
   return (
     <section className="relative">
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 bg-maroon-950">
         <img
-          src={hero(PHOTOS.couple[0], 1920, 900)}
+          src={hero(HERO_PHOTOS[Math.min(photo, HERO_PHOTOS.length - 1)], 2400, 1200)}
           alt=""
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover object-center"
+          onError={() => setPhoto((p) => p + 1)}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-maroon-950/70 via-maroon-950/45 to-maroon-950/75" />
+        {/* Scrim is bottom- and top-weighted only, so the middle of the photo
+            stays clear; the headline leans on its own text-shadow instead. */}
+        <div className="absolute inset-0 bg-gradient-to-b from-maroon-950/55 via-maroon-950/10 to-maroon-950/70" />
       </div>
 
-      <div className="container-page relative flex min-h-[30rem] flex-col items-center justify-center py-20 text-center sm:min-h-[34rem]">
+      <div className="container-page relative flex min-h-[32rem] flex-col items-center justify-center py-20 text-center sm:min-h-[38rem]">
         <Link
           to="/plan"
           className="mb-6 inline-flex items-center gap-2 rounded-full border border-gold/50 bg-gold/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold-200 backdrop-blur-sm transition-colors hover:bg-gold hover:text-ink"
@@ -109,10 +114,10 @@ function Hero() {
           <ArrowRight size={13} />
         </Link>
 
-        <h1 className="font-display text-4xl font-semibold leading-tight text-ivory drop-shadow-sm sm:text-5xl lg:text-6xl">
+        <h1 className="font-display text-4xl font-bold leading-tight text-ivory-50 [text-shadow:0_2px_18px_rgb(26_13_32_/_75%)] sm:text-5xl lg:text-6xl">
           Your Wedding, Your Way
         </h1>
-        <p className="mt-4 max-w-xl text-base text-ivory/85 sm:text-lg">
+        <p className="mt-4 max-w-xl text-base text-ivory-50/90 [text-shadow:0_1px_10px_rgb(26_13_32_/_70%)] sm:text-lg">
           Find the best wedding vendors with thousands of trusted reviews
         </p>
 
@@ -162,8 +167,8 @@ function Hero() {
         </form>
 
         {/* Popular searches */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-sm text-ivory/75">
-          <span className="font-medium text-ivory">Popular Searches:</span>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-sm text-ivory-50/80 [text-shadow:0_1px_8px_rgb(26_13_32_/_80%)]">
+          <span className="font-medium text-ivory-50">Popular Searches:</span>
           {HERO_LINKS.map((l, i) => (
             <span key={l.label} className="flex items-center gap-2">
               {i > 0 && <span className="opacity-40">·</span>}
@@ -368,7 +373,7 @@ function PopularVenueSearches() {
                     <span className="opacity-40">|</span>
                   </span>
                 ))}
-                <Link to={g.href} className="font-medium text-maroon hover:underline">
+                <Link to={g.href} className="font-medium text-maroon-600 hover:underline">
                   More
                 </Link>
               </p>
@@ -809,7 +814,7 @@ function FeaturedVendors({ vendors }: { vendors: Vendor[] }) {
                   imgClassName="transition-transform duration-500 group-hover:scale-105"
                 />
                 <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-md bg-white/95 px-2 py-1 text-xs font-bold text-maroon shadow-sm">
-                  <Star size={12} className="fill-gold text-gold" />
+                  <Star size={12} className="fill-star text-star" />
                   {v.rating.toFixed(1)}
                 </span>
               </div>

@@ -23,7 +23,9 @@ export function SectionHead({
       {href && (
         <Link
           to={href}
-          className="shrink-0 text-sm font-semibold text-maroon hover:text-maroon-800"
+          // maroon-600 not DEFAULT: the brand rose only clears AA on white at
+          // this step for 14px text.
+          className="shrink-0 text-sm font-semibold text-maroon-600 hover:text-maroon-800"
         >
           {linkLabel} &rarr;
         </Link>

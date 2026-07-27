@@ -12,7 +12,7 @@ export default function Brand({
   const sub = tone === 'light' ? 'text-ivory/70' : 'text-ink-muted'
   return (
     <Link to="/" className={`group inline-flex items-center gap-2.5 ${className}`}>
-      <span className="grid h-9 w-9 place-items-center rounded-full bg-maroon text-gold shadow-sm transition-transform duration-300 group-hover:rotate-[8deg]">
+      <span className="grid h-9 w-9 place-items-center rounded-full bg-maroon text-ivory shadow-sm transition-transform duration-300 group-hover:rotate-[8deg]">
         <svg width="18" height="18" viewBox="0 0 32 32" fill="none" aria-hidden="true">
           <path d="M16 4 L26 14 L16 28 L6 14 Z" stroke="currentColor" strokeWidth="1.6" />
           <circle cx="16" cy="15" r="2.4" fill="currentColor" />

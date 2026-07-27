@@ -38,7 +38,7 @@ export default function AdminCollections() {
                 )}
               </div>
               <p className="truncate text-xs text-ink-muted">
-                {c.type} · <Link to={`/collections/${c.id}`} className="text-maroon hover:underline">view public page</Link>
+                {c.type} · <Link to={`/collections/${c.id}`} className="text-maroon-600 hover:underline">view public page</Link>
               </p>
             </div>
             <button

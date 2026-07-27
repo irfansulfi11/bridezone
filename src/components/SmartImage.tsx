@@ -17,12 +17,12 @@ interface SmartImageProps {
 // (e.g. in an offline sandbox). Deterministic per seed → the grid looks
 // varied but cohesive rather than showing broken-image icons.
 const GRADIENTS = [
-  ['#7c1f2b', '#4d1a23'], // maroon → deep
-  ['#611c27', '#2b0b10'], // plum
-  ['#a8741f', '#611c27'], // ochre → maroon
-  ['#9f2c36', '#611c27'], // rose-red
-  ['#87561d', '#4d1a23'], // bronze
-  ['#b83f47', '#7c1f2b'], // warm rose
+  ['#6b2d8f', '#2a1533'], // royal purple → aubergine
+  ['#a45ecf', '#582674'], // light purple
+  ['#8a3fb5', '#2a1533'], // purple → deep
+  ['#e9a6c4', '#94305c'], // blush → plum
+  ['#3a2b45', '#1a0d20'], // neutral aubergine
+  ['#cd5c8f', '#582674'], // rose-plum → purple
 ]
 
 function hash(str: string): number {

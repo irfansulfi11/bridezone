@@ -164,7 +164,7 @@ export default function Venues() {
                       imgClassName="transition-transform duration-500 group-hover:scale-105"
                     />
                     <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-md bg-white/95 px-2 py-1 text-xs font-bold text-maroon shadow-sm">
-                      <Star size={12} className="fill-gold text-gold" />
+                      <Star size={12} className="fill-star text-star" />
                       {v.rating.toFixed(1)}
                     </span>
                   </div>

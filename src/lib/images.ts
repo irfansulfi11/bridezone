@@ -88,3 +88,15 @@ export const PHOTOS = {
 
 /** Hero / banner sized helper — wide crop. */
 export const hero = (id: string, w = 1920, h = 900): string => unsplash(id, w, h)
+
+/**
+ * Homepage hero candidates, brightest first. The hero renders a raw <img>
+ * rather than SmartImage (it needs to paint immediately), so it walks this list
+ * on error instead of falling back to a gradient.
+ */
+export const HERO_PHOTOS = [
+  '1583939003579-730e3918a45a',
+  '1519741497674-611481863552',
+  '1606216794074-735e91aa2c92',
+  '1519225421980-715cb0215aed',
+] as const

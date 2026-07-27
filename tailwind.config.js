@@ -1,60 +1,80 @@
 /** @type {import('tailwindcss').Config} */
+
+/*
+ * PALETTE ROLES
+ *
+ * The token *names* below are inherited from the original theme; their *values*
+ * are the current rose-red scheme. Read them by role, not by name:
+ *
+ *   maroon → the brand rose-red. Steps 50–800 are the true rose ramp (buttons,
+ *            links, prices, active states). Steps 900/950 are deliberately dark
+ *            neutrals, because they are only ever used as dark surfaces —
+ *            footer, page banners, image scrims.
+ *   gold   → rose-tinted secondary. Light steps read as on-dark text, deep
+ *            steps as eyebrows and labels on light.
+ *   ivory  → surfaces and on-dark text. DEFAULT is white; 100/200 are the light
+ *            grey bands that alternate between sections.
+ *   ink    → charcoal body text.
+ *   star   → the one warm accent left, reserved for rating stars.
+ */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
-        // Deep maroon / burgundy — brand primary
+        // Royal purple (50–800) + deep aubergine surfaces (900/950)
         maroon: {
-          50: '#fbf1f2',
-          100: '#f6dedf',
-          200: '#edc0c2',
-          300: '#df979b',
-          400: '#cd646a',
-          500: '#b83f47',
-          600: '#9f2c36',
-          700: '#7c1f2b', // DEFAULT — signature deep maroon
-          800: '#611c27',
-          900: '#4d1a23',
-          950: '#2b0b10',
-          DEFAULT: '#7c1f2b',
+          50: '#faf6fd',
+          100: '#f4eafb',
+          200: '#e9d6f6',
+          300: '#d7b4ee',
+          400: '#bf87e0',
+          500: '#a45ecf',
+          600: '#8a3fb5',
+          700: '#6b2d8f', // the signature royal purple
+          800: '#582674',
+          900: '#2a1533', // dark surface — footer, page banners
+          950: '#1a0d20', // darkest surface — scrims, footer link columns
+          DEFAULT: '#6b2d8f',
         },
-        // Warm gold accent — used sparingly
+        // Blush secondary — labels, eyebrows, on-dark headings
         gold: {
-          50: '#fbf7ec',
-          100: '#f5eacb',
-          200: '#ecd494',
-          300: '#e0bd5d',
-          400: '#d3a635',
-          500: '#c49128', // DEFAULT — warm gold
-          600: '#a8741f',
-          700: '#87561d',
-          800: '#71461f',
-          900: '#613b1f',
-          DEFAULT: '#c49128',
+          50: '#fdf5f9',
+          100: '#fbe9f2',
+          200: '#f7d5e6',
+          300: '#e9a6c4', // the signature blush
+          400: '#dd82ac',
+          500: '#cd5c8f',
+          600: '#b34172',
+          700: '#94305c',
+          800: '#7a2a4d',
+          900: '#64243f',
+          DEFAULT: '#e9a6c4',
         },
-        // Ivory / warm-white backgrounds
+        // Surfaces + on-dark text
         ivory: {
-          DEFAULT: '#fbf7f0',
-          50: '#fefdfb',
-          100: '#fbf7f0',
-          200: '#f5ecdd',
+          DEFAULT: '#faf7fb', // soft white — the default page surface
+          50: '#ffffff',
+          100: '#f5f0f8',
+          200: '#ece4f1',
         },
-        // Near-black text
+        // Plum charcoal text
         ink: {
-          DEFAULT: '#1c1a19',
-          soft: '#4a4542',
-          muted: '#8a827c',
+          DEFAULT: '#2b2430',
+          soft: '#575062',
+          muted: '#6f6879', // darkened from the old grey so secondary text clears AA
         },
+        // Rating stars only
+        star: '#f5a623',
       },
       fontFamily: {
-        display: ['"Playfair Display"', 'Georgia', 'serif'],
-        serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Inter', 'system-ui', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        card: '0 1px 2px rgba(28,26,25,0.04), 0 8px 24px -12px rgba(28,26,25,0.15)',
-        lift: '0 8px 20px -6px rgba(28,26,25,0.12), 0 24px 48px -20px rgba(124,31,43,0.25)',
+        card: '0 1px 2px rgba(20,20,24,0.04), 0 8px 24px -12px rgba(20,20,24,0.12)',
+        lift: '0 8px 20px -6px rgba(20,20,24,0.10), 0 24px 48px -20px rgba(20,20,24,0.18)',
       },
       keyframes: {
         'fade-in': {

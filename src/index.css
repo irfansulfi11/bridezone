@@ -29,10 +29,10 @@
     @apply bg-maroon text-ivory;
   }
 
-  /* Elegant, thin scrollbar on supported browsers */
+  /* Thin scrollbar on supported browsers */
   * {
     scrollbar-width: thin;
-    scrollbar-color: #d8c9a0 transparent;
+    scrollbar-color: #d1d1d6 transparent;
   }
 }
 
@@ -42,7 +42,7 @@
     @apply mx-auto w-full max-w-7xl px-5 sm:px-8;
   }
 
-  /* Primary button — maroon */
+  /* Primary button — brand rose */
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3
            text-sm font-medium tracking-wide transition-all duration-200
@@ -53,8 +53,9 @@
   .btn-primary {
     @apply btn bg-maroon text-ivory shadow-sm hover:bg-maroon-800 hover:shadow-lift;
   }
+  /* CTA that sits on a dark surface — solid white, brand-coloured label */
   .btn-gold {
-    @apply btn bg-gold text-ink shadow-sm hover:bg-gold-600 hover:text-ivory;
+    @apply btn bg-ivory text-maroon shadow-sm hover:bg-maroon-50;
   }
   .btn-outline {
     @apply btn border border-maroon/25 bg-transparent text-maroon
@@ -70,9 +71,9 @@
            font-medium tracking-wide;
   }
 
-  /* Gold "Featured" badge */
+  /* "Featured" badge */
   .badge-featured {
-    @apply chip bg-gradient-to-r from-gold-400 to-gold-600 text-ink shadow-sm;
+    @apply chip bg-maroon text-ivory shadow-sm;
   }
 
   /* Text input */

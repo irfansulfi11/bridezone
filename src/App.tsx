@@ -1,6 +1,9 @@
 import { Outlet, Route, Routes } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import MobileTabBar from './components/MobileTabBar'
+import AssistantFab from './components/AssistantFab'
+import AppInstallBanner from './components/AppInstallBanner'
 import ScrollToTop from './components/ScrollToTop'
 import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
@@ -27,11 +30,16 @@ import { NotFound } from './pages/Placeholder'
 function PublicLayout() {
   return (
     <div className="flex min-h-screen flex-col">
+      <AppInstallBanner />
       <Navbar />
       <main className="flex-1">
         <Outlet />
       </main>
       <Footer />
+      {/* Bottom padding so the fixed tab bar never covers the footer's last row */}
+      <div className="h-[calc(3.5rem+env(safe-area-inset-bottom))] lg:hidden" />
+      <AssistantFab />
+      <MobileTabBar />
     </div>
   )
 }

@@ -2,30 +2,19 @@ import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight,
-  Brush,
-  Building2,
-  Camera,
   Check,
   ChevronRight,
-  Circle,
-  Flower2,
+  ChevronsRight,
   Gem,
-  Hand,
-  Mail,
   MapPin,
-  Music,
-  Plane,
   Search,
-  Shirt,
   Smartphone,
   Sparkles,
   Star,
-  UtensilsCrossed,
   Users,
-  Video,
   Wallet,
-  type LucideIcon,
 } from 'lucide-react'
+import { categoryIcon } from '../lib/categoryIcons'
 import SmartImage from '../components/SmartImage'
 import Rail, { SectionHead } from '../components/Rail'
 import { useStore } from '../store/StoreContext'
@@ -121,10 +110,25 @@ function Hero() {
           Find the best wedding vendors with thousands of trusted reviews
         </p>
 
+        {/* Mobile: a single tap-through bar, matching the reference's phone
+            layout. The full two-select form takes over from sm up. */}
+        <Link
+          to="/vendors"
+          className="mt-8 flex w-full items-center overflow-hidden rounded-lg bg-white shadow-lift sm:hidden"
+        >
+          <span className="h-full w-12 self-stretch bg-maroon" />
+          <span className="flex-1 px-4 py-3.5 text-left text-base font-bold text-maroon">
+            Find Vendors
+          </span>
+          <span className="px-4 text-maroon">
+            <ChevronsRight size={22} />
+          </span>
+        </Link>
+
         {/* Search bar */}
         <form
           onSubmit={submit}
-          className="mt-9 flex w-full max-w-3xl flex-col gap-2 rounded-2xl bg-white/95 p-2 shadow-lift backdrop-blur sm:flex-row sm:rounded-full"
+          className="mt-9 hidden w-full max-w-3xl flex-col gap-2 rounded-2xl bg-white/95 p-2 shadow-lift backdrop-blur sm:flex sm:flex-row sm:rounded-full"
         >
           <label className="flex flex-1 items-center gap-2 rounded-full px-4 py-3 sm:py-2">
             <Search size={17} className="shrink-0 text-maroon" />
@@ -364,16 +368,24 @@ function PopularVenueSearches() {
               <Link to={g.href} className="text-sm font-semibold text-ink hover:text-maroon">
                 {g.title}
               </Link>
-              <p className="mt-1.5 flex flex-wrap items-center gap-x-1.5 text-sm text-ink-muted">
+              {/* Short city names like "Goa" are tiny tap targets, so the links
+                  carry extra vertical padding on touch widths. */}
+              <p className="mt-1 flex flex-wrap items-center gap-x-1.5 text-sm text-ink-muted">
                 {g.cities.map((c) => (
                   <span key={c} className="flex items-center gap-1.5">
-                    <Link to={`${g.href}&city=${c}`} className="hover:text-maroon">
+                    <Link
+                      to={`${g.href}&city=${c}`}
+                      className="inline-block py-2 hover:text-maroon sm:py-0.5"
+                    >
                       {c}
                     </Link>
                     <span className="opacity-40">|</span>
                   </span>
                 ))}
-                <Link to={g.href} className="font-medium text-maroon-600 hover:underline">
+                <Link
+                  to={g.href}
+                  className="inline-block py-2 font-medium text-maroon-600 hover:underline sm:py-0.5"
+                >
                   More
                 </Link>
               </p>
@@ -458,23 +470,6 @@ function PopularSearchesRow() {
 
 /* ------------------------------------------------------ wedding categories */
 
-// Only the icons the category data actually names — a namespace import would
-// pull the whole lucide set into the bundle.
-const CATEGORY_ICONS: Record<string, LucideIcon> = {
-  Brush,
-  Building2,
-  Camera,
-  Flower2,
-  Gem,
-  Hand,
-  Mail,
-  Music,
-  Plane,
-  Shirt,
-  UtensilsCrossed,
-  Video,
-}
-
 function WeddingCategories() {
   return (
     <section className="bg-ivory-100">
@@ -482,7 +477,7 @@ function WeddingCategories() {
         <SectionHead title="Wedding Categories" href="/vendors" linkLabel="View all Categories" />
         <div className="grid gap-x-8 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
           {CATEGORY_GROUPS.map((g) => {
-            const Icon = CATEGORY_ICONS[g.icon] ?? Circle
+            const Icon = categoryIcon(g.icon)
             return (
               <div key={g.title} className="rounded-xl bg-white p-5 shadow-card ring-1 ring-ink/5">
                 <Link to={g.href} className="group flex items-center gap-2.5">

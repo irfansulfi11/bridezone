@@ -237,6 +237,40 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     items: [{ label: 'Mehendi Artists', href: v('makeup') }],
   },
   {
+    icon: 'Shirt',
+    title: 'Groom Wear',
+    href: '/photos?album=groom-wear',
+    items: [
+      { label: 'Sherwani', href: '/photos?album=groom-wear' },
+      { label: 'Mundu & Kurta', href: '/photos?album=groom-wear' },
+      { label: 'Groom Accessories', href: '/photos?album=groom-wear' },
+    ],
+  },
+  {
+    icon: 'Heart',
+    title: 'Pre Wedding Shoot',
+    href: v('photography'),
+    items: [
+      { label: 'Shoot Locations', href: v('photography') },
+      { label: 'Pre Wedding Photographers', href: v('photography') },
+    ],
+  },
+  {
+    icon: 'BookOpen',
+    title: 'Pandits',
+    href: '/vendors',
+    items: [{ label: 'Wedding Pandits', href: '/vendors' }],
+  },
+  {
+    icon: 'Sparkles',
+    title: 'Bridal Grooming',
+    href: v('makeup'),
+    items: [
+      { label: 'Salons & Spas', href: v('makeup') },
+      { label: 'Skin & Hair Prep', href: v('makeup') },
+    ],
+  },
+  {
     icon: 'Video',
     title: 'Virtual Planning',
     href: '/plan',

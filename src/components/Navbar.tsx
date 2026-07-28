@@ -18,6 +18,7 @@ import Brand from './Brand'
 import { useAuth } from '../store/AuthContext'
 import { CATEGORY_GROUPS, CITY_GROUPS, PHOTO_ALBUMS, VENUE_TYPES } from '../data/wmg'
 import { useCity } from '../store/CityContext'
+import { categoryIcon } from '../lib/categoryIcons'
 
 /** Main nav entries. `menu` selects which mega-panel opens on hover. */
 const NAV_LINKS: { to: string; label: string; menu?: 'venues' | 'vendors' | 'photos' }[] = [
@@ -26,6 +27,16 @@ const NAV_LINKS: { to: string; label: string; menu?: 'venues' | 'vendors' | 'pho
   { to: '/photos', label: 'Photos', menu: 'photos' },
   { to: '/real-weddings', label: 'Real Weddings' },
   { to: '/blog', label: 'Blog' },
+  { to: '/e-invites', label: 'E-Invites' },
+  { to: '/plan', label: 'Genie' },
+]
+
+/** Non-category rows in the mobile drawer, below the categories block. */
+const DRAWER_SECTIONS = [
+  { to: '/photos', label: 'Photos' },
+  { to: '/real-weddings', label: 'Real Weddings' },
+  { to: '/blog', label: 'Blogs' },
+  { to: '/collections', label: 'Jewellery' },
   { to: '/e-invites', label: 'E-Invites' },
   { to: '/plan', label: 'Genie' },
 ]
@@ -40,6 +51,8 @@ export default function Navbar() {
   const [accountOpen, setAccountOpen] = useState(false)
   const [cityOpen, setCityOpen] = useState(false)
   const [openMenu, setOpenMenu] = useState<string | null>(null)
+  // Which category accordion is expanded in the mobile drawer (one at a time)
+  const [openCategory, setOpenCategory] = useState<string | null>(null)
 
   const accountRef = useRef<HTMLDivElement>(null)
   const cityRef = useRef<HTMLDivElement>(null)
@@ -112,7 +125,9 @@ export default function Navbar() {
           >
             <MapPin size={15} className="text-maroon" />
             {city}
-            <ChevronDown size={14} className={`transition-transform ${cityOpen ? 'rotate-180' : ''}`} />
+            <span className={`transition-transform duration-200 ${cityOpen ? 'rotate-180' : ''}`}>
+              <ChevronDown size={14} />
+            </span>
           </button>
 
           {cityOpen && (
@@ -272,10 +287,13 @@ export default function Navbar() {
                   {user.role === 'admin' ? <Shield size={14} /> : <User size={14} />}
                 </span>
                 <span className="max-w-[8rem] truncate font-medium text-ink">{user.name}</span>
-                <ChevronDown
-                  size={15}
-                  className={`text-ink-muted transition-transform ${accountOpen ? 'rotate-180' : ''}`}
-                />
+                <span
+                  className={`text-ink-muted transition-transform duration-200 ${
+                    accountOpen ? 'rotate-180' : ''
+                  }`}
+                >
+                  <ChevronDown size={15} />
+                </span>
               </button>
               {accountOpen && (
                 <div className="absolute right-0 mt-2 w-56 animate-fade overflow-hidden rounded-xl border border-maroon/10 bg-white shadow-lift">
@@ -314,73 +332,160 @@ export default function Navbar() {
 
       {/* ------------------------------------------------- mobile drawer */}
       {mobileOpen && (
-        <div className="max-h-[calc(100vh-4rem)] animate-fade overflow-y-auto border-t border-maroon/10 bg-white lg:hidden">
-          <nav className="container-page flex flex-col py-3">
-            <div className="mb-2 flex items-center gap-2 rounded-lg bg-maroon/5 px-3 py-2.5 text-sm">
-              <MapPin size={16} className="text-maroon" />
-              <select
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                className="flex-1 bg-transparent font-medium text-maroon focus:outline-none"
-              >
-                {CITY_GROUPS.flatMap((g) => g.cities).map((c, i) => (
-                  <option key={`${c}-${i}`} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-            </div>
+        <>
+          {/* Anchored to the header rather than the viewport, so the drawer
+              still lines up when the app-install banner sits above it. */}
+          <div
+            className="absolute left-0 top-full z-40 h-screen w-screen bg-ink/40 lg:hidden"
+            onClick={() => setMobileOpen(false)}
+            aria-hidden="true"
+          />
 
-            {NAV_LINKS.map((l) => (
-              <NavLink
-                key={l.to}
-                to={l.to}
-                className={({ isActive }) =>
-                  `flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-medium ${
-                    isActive ? 'bg-maroon/5 text-maroon' : 'text-ink-soft'
-                  }`
-                }
-              >
-                {l.label === 'Genie' && <Sparkles size={16} className="text-gold-600" />}
-                {l.label}
-              </NavLink>
-            ))}
-
-            <div className="my-2 h-px bg-maroon/10" />
-
-            <Link to="/vendors" className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm text-ink-soft">
-              <Star size={16} className="text-gold-600" /> Write A Review
-            </Link>
-            <Link to="/plan" className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm text-ink-soft">
-              <Smartphone size={16} className="text-gold-600" /> Download App
-            </Link>
-
-            <div className="my-2 h-px bg-maroon/10" />
-
-            {!user ? (
-              <Link to="/login" className="btn-primary w-full">
-                Log In
-              </Link>
-            ) : (
-              <>
+          <div className="absolute left-0 top-full z-50 h-[calc(100vh-4rem)] w-[86%] max-w-sm animate-fade overflow-y-auto overscroll-contain bg-white shadow-lift lg:hidden">
+            <nav className="flex flex-col pb-10">
+              {/* Account */}
+              {!user ? (
+                <Link
+                  to="/login"
+                  className="flex items-center gap-3 border-b border-ink/10 px-5 py-4 text-base font-semibold text-ink"
+                >
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-maroon/10 text-maroon">
+                    <User size={18} />
+                  </span>
+                  Sign In / Sign Up
+                </Link>
+              ) : (
                 <Link
                   to={dashHref}
-                  className="flex items-center gap-2 rounded-lg px-3 py-3 text-sm font-medium text-ink-soft"
+                  className="flex items-center gap-3 border-b border-ink/10 px-5 py-4 text-base font-semibold text-ink"
                 >
-                  <LayoutDashboard size={16} />
-                  {user.role === 'admin' ? 'Admin panel' : 'My dashboard'}
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-maroon text-ivory">
+                    {user.role === 'admin' ? <Shield size={16} /> : <User size={16} />}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block truncate">{user.name}</span>
+                    <span className="block text-xs font-normal text-ink-muted">
+                      {user.role === 'admin' ? 'Admin panel' : 'My dashboard'}
+                    </span>
+                  </span>
                 </Link>
+              )}
+
+              {/* City */}
+              <label className="flex items-center gap-3 border-b border-ink/10 px-5 py-3.5 text-sm">
+                <MapPin size={18} className="shrink-0 text-maroon" />
+                <select
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className="min-w-0 flex-1 bg-transparent font-medium text-ink focus:outline-none"
+                >
+                  {CITY_GROUPS.flatMap((g) => g.cities).map((c, i) => (
+                    <option key={`${c}-${i}`} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              {/* Wedding categories — each row expands to its sub-links */}
+              <p className="px-5 pb-1 pt-5 text-base font-bold text-ink">Wedding Categories</p>
+              {CATEGORY_GROUPS.map((g) => {
+                const Icon = categoryIcon(g.icon)
+                const open = openCategory === g.title
+                return (
+                  <div key={g.title} className="border-b border-ink/[0.07]">
+                    <button
+                      onClick={() => setOpenCategory(open ? null : g.title)}
+                      aria-expanded={open}
+                      className="flex w-full items-center gap-3 px-5 py-3.5 text-left"
+                    >
+                      <Icon size={20} className="shrink-0 text-ink-muted" />
+                      <span className="flex-1 text-[15px] font-medium text-ink">{g.title}</span>
+                      {/* Rotate a span, not the <svg>: Tailwind's transform
+                          utilities don't resolve on SVG elements here. */}
+                      <span
+                        className={`shrink-0 text-ink-muted transition-transform duration-200 ${
+                          open ? 'rotate-180' : ''
+                        }`}
+                      >
+                        <ChevronDown size={18} />
+                      </span>
+                    </button>
+                    {open && (
+                      <ul className="animate-fade pb-2">
+                        {g.items.map((i) => (
+                          <li key={i.label}>
+                            <Link
+                              to={i.href}
+                              className="block py-2.5 pl-[3.5rem] pr-5 text-sm text-ink-soft"
+                            >
+                              {i.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )
+              })}
+
+              {/* Sections */}
+              <div className="mt-2 border-t-8 border-ink/[0.06]" />
+              {DRAWER_SECTIONS.map((l) => (
+                <NavLink
+                  key={l.to}
+                  to={l.to}
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 border-b border-ink/[0.07] px-5 py-3.5 text-[15px] font-medium ${
+                      isActive ? 'text-maroon' : 'text-ink'
+                    }`
+                  }
+                >
+                  {l.label === 'Genie' && <Sparkles size={16} className="text-maroon" />}
+                  {l.label}
+                </NavLink>
+              ))}
+
+              {/* Utility */}
+              <div className="mt-2 border-t-8 border-ink/[0.06]" />
+              <Link
+                to="/vendors"
+                className="border-b border-ink/[0.07] px-5 py-3.5 text-[15px] font-medium text-ink"
+              >
+                Write a Review
+              </Link>
+              <Link
+                to="/plan"
+                className="border-b border-ink/[0.07] px-5 py-3.5 text-[15px] font-medium text-ink"
+              >
+                Download the App
+              </Link>
+
+              {/* Legal */}
+              <div className="mt-2 border-t-8 border-ink/[0.06]" />
+              {[
+                { to: '/plan', label: 'About' },
+                { to: '/plan', label: 'Terms & Conditions' },
+                { to: '/plan', label: 'Privacy Policy' },
+                { to: '/plan', label: 'Contact Us' },
+              ].map((l) => (
+                <Link key={l.label} to={l.to} className="px-5 py-2.5 text-sm text-ink-soft">
+                  {l.label}
+                </Link>
+              ))}
+
+              {user && (
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 rounded-lg px-3 py-3 text-left text-sm font-medium text-maroon"
+                  className="mt-3 flex items-center gap-2 px-5 py-3 text-left text-[15px] font-medium text-maroon"
                 >
                   <LogOut size={16} />
                   Sign out
                 </button>
-              </>
-            )}
-          </nav>
-        </div>
+              )}
+            </nav>
+          </div>
+        </>
       )}
     </header>
   )
